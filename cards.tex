@@ -1,0 +1,178 @@
+% Code modified from https://tex.stackexchange.com/questions/243740/print-double-sided-playing-cards
+
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+%\usepackage{color}
+\usepackage{amsmath, amssymb}
+\usepackage{tikz}
+\usetikzlibrary{patterns, shadows, positioning}
+\usepackage{pifont}
+\usepackage{fourier-orns}
+\usepackage[hmargin=0mm,vmargin=0mm, letterpaper]{geometry}
+\usepackage{tabularx}
+\usepackage{epsdice}
+
+%\setlength{\parindent}{0cm}
+
+\definecolor{titlebg}{rgb}{30, 30 , 30}
+
+\newcommand{\icon}{$\alpha$}
+\newcommand{\cardtype}{cardtype}
+\newcommand{\cardtitle}{cardtitle}
+\newcommand{\cost}{cost}
+\newcommand{\flavortext}{flavortext}
+\newcommand{\cardcontent}{cardcontent}
+\newcommand{\cardid}{cardid}
+\newcommand{\cardimg}{rainier.jpg}
+
+%   TikZ/PGF Settings für die Karten
+\def\cardwidth{2.5in}
+\def\cardheight{3.5in}
+\def\imagewidth{\cardwidth}
+\def\imageheight{\cardheight}
+\pgfmathsetmacro{\stripwidth}{0.7pt}
+\pgfmathsetmacro{\strippadding}{0.2pt}
+\pgfmathsetmacro{\textpadding}{0.1pt}
+\pgfmathsetmacro{\titley}{\cardheight-\strippadding-1.5*\textpadding-0.5*\stripwidth}
+
+\def\shapeCard{(0,0) rectangle (\cardwidth, \cardheight)}
+\def\shapeLeftStripLong{(0,0) rectangle 
+    (\stripwidth,\cardheight)}
+\def\shapeLeftStripShort{(\strippadding,\cardheight-\strippadding-1) rectangle 
+    (\strippadding+\stripwidth,\cardheight+0.2)}
+\def\shapeRightStripShort{(\cardwidth-\stripwidth-\strippadding,
+    \cardheight-\strippadding-1) rectangle (\cardwidth-\strippadding,   
+    \cardheight+0.2)}
+\def\shapeRightStripLong{(\strippadding,-0.2) rectangle 
+    (\strippadding-\stripwidth,\cardheight-\strippadding-\strippadding-1)}
+\def\shapeTitleArea{(2*\strippadding+\stripwidth,\cardheight-\strippadding) 
+    rectangle (\cardwidth-2*\strippadding-\stripwidth,\cardheight-2*\stripwidth)}
+\def\shapeContentArea{(2*\strippadding+\stripwidth,0.5*\cardheight) rectangle 
+    (\cardwidth+0.2,-0.2)}
+
+\tikzset{%
+  cardimage/.style={path picture={
+      \node[below=-1.5mm] at (0.5*\cardwidth,\cardheight) {
+          \includegraphics[width=\imagewidth,keepaspectratio]{#1}
+      };}},
+  strips/.style={olive!100},
+  strip font/.style={font=\LARGE, text=white}
+}
+
+\newcommand{\cardbackground}[1]{
+    \draw[cardimage=#1] \shapeCard;}
+
+\newcommand{\frontcard}[1][]{#1
+\begin{tikzpicture}
+  \cardbackground{\cardimg}        
+
+  % card type strip
+  \fill[strips] \shapeLeftStripLong node[rotate = 90, above left, strip font] 
+       {\uppercase{\cardtype}};
+       
+       % card content
+       \node[font=\normalsize, rotate = 90,
+         fill=white] 
+       at (5,5) 
+       { \cardcontent };                      
+       
+\end{tikzpicture}}
+
+
+\newcommand{\trailcard}[6]{
+\begin{tikzpicture}
+  %begin card creation
+
+      %\draw [step=.5, help lines] (0,0) grid (\cardwidth,\cardheight);
+    % draw card boundries and clip corners
+    \draw[black] \shapeCard;
+
+    \def\offset{0.35}
+    \begin{scope}
+      \node (A) at (#1-\offset,0.75) {\Huge\epsdice{#1}};
+      \node (B) at (#2-\offset,2.25) {\Huge\epsdice{#2}};
+      \node (C) at (#3-\offset,3.75) {\Huge\epsdice{#3}};
+      \node (D) at (#4-\offset,5.25) {\Huge\epsdice{#4}};
+      \node (E) at (#5-\offset,6.75) {\Huge\epsdice{#5}};
+      \node (F) at (#6-\offset,8.25) {\Huge\epsdice{#6}};
+
+      \draw (A) -- (B) -- (C) -- (D) -- (E) -- (F);
+    \end{scope}
+     %%text width=(\cardwidth-2*\strippadding-\stripwidth-2*\textpadding-0.3)*1cm] 
+     %at (2*\strippadding+\stripwidth+\textpadding, 0.0) 
+     %{ \cardid };
+     
+\end{tikzpicture}}
+
+\begin{document}
+
+% https://tex.stackexchange.com/questions/56101/spaces-between-rows-and-cols-in-a-table-better-ways-than-mine
+\setlength\tabcolsep{0pt}
+\renewcommand{\arraystretch}{0}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|c|c|c|}
+  \frontcard[\renewcommand{\cardtype}{\LARGE Mt. Rainier}%
+    \renewcommand{\cardcontent}{\LARGE Must rest after using stamina}%
+    \renewcommand{\cardimg}{rainier.jpg}] &
+  \frontcard[
+    \renewcommand{\cardtype}{\LARGE Great Sand Dunes}%
+    \renewcommand{\cardcontent}{\LARGE Reduce stamina by one}%
+    \renewcommand{\cardimg}{dunes.jpg}] &
+  \frontcard[%
+    \renewcommand{\cardtype}{\LARGE Joshua Tree}%
+    \renewcommand{\cardcontent}{\LARGE May not save stamina $=$ 6}%
+    \renewcommand{\cardimg}{joshua_tree.jpg }] \\
+  \hline
+  \frontcard[
+    \renewcommand{\cardtype}{\LARGE Pipestone}%
+    \renewcommand{\cardcontent}{\LARGE Die may be $>=$ terrain}%
+    \renewcommand{\cardimg}{pipestone.jpg}] &
+  \frontcard[
+    \renewcommand{\cardtype}{\LARGE Black Hills}%
+    \renewcommand{\cardcontent}{\LARGE Must rest on triplets}%
+    \renewcommand{\cardimg}{black_hills.jpg}] &
+  \frontcard[
+    \renewcommand{\cardtype}{\LARGE Cedar Breaks}%
+    \renewcommand{\cardcontent}{\LARGE May save two stamina}%
+    \renewcommand{\cardimg}{cedar.jpg}]  \\
+    \hline
+  \frontcard[
+    \renewcommand{\cardtype}{\LARGE Badlands}%
+    \renewcommand{\cardcontent}{\LARGE Terrains 4--6 reduced to 3}%
+    \renewcommand{\cardimg}{badlands.jpg}] &
+  \frontcard[
+    \renewcommand{\cardtype}{\LARGE Grand Canyon}%
+    \renewcommand{\cardcontent}{\LARGE Complete all 5 path cards}%
+    \renewcommand{\cardimg}{grand_canyon.jpg}] &
+  \frontcard[
+    \renewcommand{\cardtype}{\LARGE Pikes Peak}%
+    \renewcommand{\cardcontent}{\LARGE Ride to the top for 5 rests}%
+    \renewcommand{\cardimg}{pikes_peak.jpg}]  \\ 
+  \end{tabular}
+  \end{table}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|c|c|c|}
+    %\hline \\
+    \trailcard{6}{1}{2}{5}{4}{3} &
+    \trailcard{5}{3}{1}{2}{6}{4} &
+    \trailcard{2}{1}{5}{3}{4}{6} \\
+    %\hline
+    \trailcard{4}{5}{2}{3}{6}{1} &
+    \trailcard{2}{4}{1}{3}{6}{5} &
+    \trailcard{2}{3}{6}{1}{4}{5} \\
+    %\hline
+    \trailcard{1}{4}{2}{5}{3}{6} &
+    \trailcard{3}{1}{5}{4}{2}{6} &
+    \trailcard{6}{2}{5}{4}{3}{1} %\\
+    %\hline
+  \end{tabular}%
+  \hskip\headheight
+\end{table}
+
+
+\end{document}
