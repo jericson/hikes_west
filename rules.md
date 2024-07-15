@@ -6,6 +6,8 @@ to their fullest, it is necessary to get out of your car and go on a
 hike. _Hikes of the West_ simulates three adventures across three
 different locations.
 
+![Bison roaming the Black Hills](originals/black_hills.jpg)
+
 ## Setup
 
 You will need:
